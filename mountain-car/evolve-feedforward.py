@@ -103,6 +103,25 @@ def eval_genomes(genomes, config):
         genome.fitness = eval_genome(genome, config)
 
 
+def get_selected_features(path='winner-feedforward.gv'):
+
+    with open(path) as file:
+        contents = file.read()
+        #print(type(contents))
+        lines=contents.split('\n')
+        # print(type(lines))
+        tiles=[]
+        for l in lines:
+            if l.find("->")!=-1:
+                if l.find('t') == 1:
+                    tiles.append(l[1:6])
+        # print(tiles)
+        file.close()
+    # print(len(tiles))
+    tiles=list(set(tiles))
+    return tiles
+
+
 def run():
     # Load the config file, which is assumed to live in
     # the same directory as this script.
@@ -153,7 +172,8 @@ def run():
                        filename="winner-feedforward.gv")
     # visualize.draw_net(config, winner, view=False, node_names=node_names,
     #                    filename="winner-feedforward-enabled-pruned.gv", prune_unused=True)
-
+    selected_features = get_selected_features(path='winner-feedforward.gv')
+    np.save('selected-features.npy',np.array(selected_features))
 
 if __name__ == '__main__':
     run()
