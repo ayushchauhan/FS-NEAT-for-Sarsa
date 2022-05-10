@@ -1,6 +1,6 @@
 import numpy as np
 import gym
-from sarsa import SarsaLambda, StateActionFeatureVectorWithTile
+from sarsa import SarsaLambda, StateActionFeatureVectorWithTile, StateActionFeatureVectorWithRBF
 import time
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -9,14 +9,29 @@ def test_sarsa_lamda(features='all'):
     env = gym.make("MountainCar-v0")
     gamma = 1.
 
-    X = StateActionFeatureVectorWithTile(
+    # X = StateActionFeatureVectorWithTile(
+    #     features,
+    #     env.observation_space.low,
+    #     env.observation_space.high,
+    #     env.action_space.n,
+    #     num_tilings=10,
+    #     tile_width=np.array([.451,.0351])
+    # )
+    X = StateActionFeatureVectorWithRBF(
         features,
         env.observation_space.low,
         env.observation_space.high,
         env.action_space.n,
-        num_tilings=10,
-        tile_width=np.array([.451,.0351])
-    )
+        np.array([15,15]),
+        np.array([0.04, 0.00022])
+        )
+    # for i in range(100):
+    #     x = np.random.uniform(-1.2, 0.6)
+    #     v = np.random.uniform(-0.07, 0.07)
+    #     print((x,v), X((x,v), False, 0))
+    # return
+
+
     st_time = time.time()
     weights, TD_errors, returns = SarsaLambda(env, gamma, 0.8, 0.01, X, 2000)
     print("Training Time = ", (time.time()-st_time)/60)
@@ -70,8 +85,9 @@ def test_sarsa_lamda(features='all'):
 
 
 if __name__ == "__main__":
-    features = list(np.load('selected-features.npy'))
-    # features = []
+    # features = list(np.load('selected-features.npy'))
+    # print(features)
+    features = ['rb_5_6', 'rb_10_3']
     # for tiling in range(1):
     #     for i in range(5):
     #         for j in range(5):

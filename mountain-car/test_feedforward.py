@@ -40,7 +40,7 @@ X = StateFeatureVectorWithRBF(
     env.observation_space.low,
     env.observation_space.high,
     np.array([15, 15]),
-    np.array([0.04, 0.00022])
+    np.array([0.08, 0.00044])
     )
 
 s, done = env.reset(), False

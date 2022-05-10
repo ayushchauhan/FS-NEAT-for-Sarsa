@@ -69,12 +69,86 @@ class StateActionFeatureVectorWithTile():
 
         return feat_vec.flatten()[self.features_indices]
 
+
+class StateActionFeatureVectorWithRBF():
+    def __init__(self,
+                 features,
+                 state_low:np.array,
+                 state_high:np.array,
+                 num_actions: int,
+                 num_bases:np.array,
+                 sigma2:np.array):
+
+        self.state_low = state_low
+        self.state_high = state_high
+        self.num_actions = num_actions
+        self.num_bases = num_bases
+        self.sigma2 = sigma2
+        self.centers = []
+        for i in range(len(self.state_low)):
+            self.centers.append(list(np.linspace(self.state_low[i]+(self.state_high[i]-self.state_low[i])/(2*self.num_bases[i]),self.state_high[i]-(self.state_high[i]-self.state_low[i])/(2*self.num_bases[i]),self.num_bases[i])))
+
+        self.features = features
+
+        # for c2 in np.linspace(self.state_low[1]+(self.state_high[1]-self.state_low[1])/(2*self.num_bases[1]), self.state_high[1]-(self.state_high[1]-self.state_low[1])/(2*self.num_bases[1]), self.num_bases[1]):
+        #     for c1 in np.linspace(self.state_low[0]+(self.state_high[0]-self.state_low[0])/(2*self.num_bases[0]), self.state_high[0]-(self.state_high[0]-self.state_low[0])/(2*self.num_bases[0]), self.num_bases[0]):
+        #         self.centers.append(np.array([c1, c2]))
+
+
+    def feature_vector_len(self) -> int:
+        if self.features == 'all':
+            return int(self.num_actions * np.prod(self.num_bases))
+        return int(self.num_actions * len(self.features))
+
+    def __call__(self, s, done, a) -> np.array:
+
+        if done:
+            return np.zeros(self.feature_vector_len())
+
+        if self.features == 'all':
+            for i, dim_val in enumerate(s):
+                features = np.array([np.exp(-(dim_val-center)**2/(2*self.sigma2[i])) for center in self.centers[i]])
+                if i == 0:
+                    feat_matrix = features
+                else:
+                    feat_matrix = np.dot(feat_matrix.reshape((-1,1)), features.reshape((1,-1)))
+            # for center in self.centers:
+            #     feat_vec.append(np.exp(-np.linalg.norm(np.array(s)-center)/(2*self.sigma)))
+            feat_matrix[feat_matrix < 0.0001] = 0
+            feat_vec = []
+            for act in range(self.num_actions):
+                if act == a:
+                    feat_vec.extend(list(feat_matrix.transpose().flatten()))
+                else:
+                    feat_vec.extend([0]*(int(self.feature_vector_len()/self.num_actions)))
+            return np.array(feat_vec)
+
+        else:
+            feat_vec_ = []
+            for feature in self.features:
+                feat = 1
+                center_indices = feature.split('_')[1:]
+                for i, dim_val in enumerate(s):
+                    feat *= np.exp(-(dim_val - self.centers[i][int(center_indices[i])])**2/(2*self.sigma2[i]))
+                if feat < 0.0001:
+                    feat_vec_.append(0)
+                else:
+                    feat_vec_.append(feat)
+            feat_vec = []
+            for act in range(self.num_actions):
+                if act == a:
+                    feat_vec.extend(feat_vec_)
+                else:
+                    feat_vec.extend([0]*len(self.features))
+            return np.array(feat_vec)            
+
+
 def SarsaLambda(
     env, # openai gym environment
     gamma:float, # discount factor
     lam:float, # decay rate
     alpha:float, # step size
-    X:StateActionFeatureVectorWithTile,
+    X,
     num_episode:int,
 ) -> np.array:
     """
