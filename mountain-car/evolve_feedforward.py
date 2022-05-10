@@ -121,7 +121,7 @@ def eval_genome(genome, config):
             env.observation_space.low,
             env.observation_space.high,
             np.array([15, 15]),
-            np.array([0.08, 0.00044])
+            np.array([0.04, 0.00022])
             )
         fitness = 0.0
         done = False
@@ -226,7 +226,7 @@ def run():
         env.observation_space.low,
         env.observation_space.high,
         np.array([15, 15]),
-        np.array([0.08, 0.00044])
+        np.array([0.04, 0.00022])
         )
     for i in range(X.num_bases[0]):
         for j in range(X.num_bases[1]):
