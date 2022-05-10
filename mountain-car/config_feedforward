@@ -5,14 +5,14 @@
 [NEAT]
 fitness_criterion     = max
 fitness_threshold     = -110
-pop_size              = 250
+pop_size              = 200
 reset_on_extinction   = 0
 
 [DefaultGenome]
-num_inputs              = 250
-num_hidden              = 1
+num_inputs              = 225
+num_hidden              = 0
 num_outputs             = 1
-initial_connection      = fs_neat_nohidden
+initial_connection      = full_direct
 feed_forward            = True
 compatibility_disjoint_coefficient    = 1.0
 compatibility_weight_coefficient      = 0.6
