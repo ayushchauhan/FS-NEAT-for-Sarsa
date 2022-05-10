@@ -85,9 +85,9 @@ def test_sarsa_lamda(features='all'):
 
 
 if __name__ == "__main__":
-    # features = list(np.load('selected-features.npy'))
+    features = list(np.load('selected-features.npy'))
     # print(features)
-    features = ['rb_5_6', 'rb_10_3']
+    # features = ['rb_5_6', 'rb_10_3']
     # for tiling in range(1):
     #     for i in range(5):
     #         for j in range(5):
