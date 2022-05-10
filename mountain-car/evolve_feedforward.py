@@ -14,7 +14,7 @@ import gym.wrappers
 
 runs_per_net = 5
 
-class StateActionFeatureVectorWithTile():
+class StateFeatureVectorWithTile():
     def __init__(self,
                  state_low:np.array,
                  state_high:np.array,
@@ -61,6 +61,48 @@ class StateActionFeatureVectorWithTile():
         return feat_vec.flatten()
 
 
+class StateFeatureVectorWithRBF():
+    def __init__(self,
+                 state_low:np.array,
+                 state_high:np.array,
+                 num_bases:np.array,
+                 sigma2:np.array):
+
+        self.state_low = state_low
+        self.state_high = state_high
+        self.num_bases = num_bases
+        self.sigma2 = sigma2
+        self.centers = []
+        for i in range(len(self.state_low)):
+            self.centers.append(list(np.linspace(self.state_low[i]+(self.state_high[i]-self.state_low[i])/(2*self.num_bases[i]),self.state_high[i]-(self.state_high[i]-self.state_low[i])/(2*self.num_bases[i]),self.num_bases[i])))
+
+
+        # for c2 in np.linspace(self.state_low[1]+(self.state_high[1]-self.state_low[1])/(2*self.num_bases[1]), self.state_high[1]-(self.state_high[1]-self.state_low[1])/(2*self.num_bases[1]), self.num_bases[1]):
+        #     for c1 in np.linspace(self.state_low[0]+(self.state_high[0]-self.state_low[0])/(2*self.num_bases[0]), self.state_high[0]-(self.state_high[0]-self.state_low[0])/(2*self.num_bases[0]), self.num_bases[0]):
+        #         self.centers.append(np.array([c1, c2]))
+
+
+    def feature_vector_len(self) -> int:
+
+        return np.prod(num_bases)
+
+    def __call__(self, s, done) -> np.array:
+
+        if done:
+            return np.zeros(self.feature_vector_len())
+
+        for i, dim_val in enumerate(s):
+            features = np.array([np.exp(-(dim_val-center)**2/(2*self.sigma2[i])) for center in self.centers[i]])
+            if i == 0:
+                feat_matrix = features
+            else:
+                feat_matrix = np.dot(feat_matrix.reshape((-1,1)), features.reshape((1,-1)))
+        # for center in self.centers:
+        #     feat_vec.append(np.exp(-np.linalg.norm(np.array(s)-center)/(2*self.sigma)))
+        feat_matrix[feat_matrix < 0.0001] = 0
+        return feat_matrix.transpose().flatten()
+
+
 # Use the NN network phenotype and the discrete actuator force function.
 def eval_genome(genome, config):
     net = neat.nn.FeedForwardNetwork.create(genome, config)
@@ -69,12 +111,18 @@ def eval_genome(genome, config):
 
     for runs in range(runs_per_net):
         env = gym.make('MountainCar-v0')
-        X = StateActionFeatureVectorWithTile(
+        # X = StateFeatureVectorWithTile(
+        #     env.observation_space.low,
+        #     env.observation_space.high,
+        #     num_tilings=10,
+        #     tile_width=np.array([.451,.0351])
+        # )
+        X = StateFeatureVectorWithRBF(
             env.observation_space.low,
             env.observation_space.high,
-            num_tilings=10,
-            tile_width=np.array([.451,.0351])
-        )
+            np.array([15, 15]),
+            np.array([0.08, 0.00044])
+            )
         fitness = 0.0
         done = False
         curr_state = env.reset()
@@ -123,6 +171,16 @@ def get_selected_features(path='winner-feedforward.gv'):
 
 
 def run():
+    env = gym.make('MountainCar-v0')
+        # X = StateFeatureVectorWithTile(
+        #     env.observation_space.low,
+        #     env.observation_space.high,
+        #     num_tilings=10,
+        #     tile_width=np.array([.451,.0351])
+        # )
+
+
+
     # Load the config file, which is assumed to live in
     # the same directory as this script.
     local_dir = os.path.dirname(__file__)
@@ -152,19 +210,29 @@ def run():
     node_names = {0:'control'}
     k = -1
     env = gym.make('MountainCar-v0')
-    X = StateActionFeatureVectorWithTile(
-            env.observation_space.low,
-            env.observation_space.high,
-            num_tilings=10,
-            tile_width=np.array([.451,.0351])
-        )
+    # X = StateFeatureVectorWithTile(
+    #         env.observation_space.low,
+    #         env.observation_space.high,
+    #         num_tilings=10,
+    #         tile_width=np.array([.451,.0351])
+    #     )
         
-    for tiling in range(X.num_tilings):
-        for i in range(X.num_tiles[0]):
-            for j in range(X.num_tiles[1]):
-                node_names[k] = "t"+str(tiling)+"_"+str(i)+str(j)
-                k -= 1
+    # for tiling in range(X.num_tilings):
+    #     for i in range(X.num_tiles[0]):
+    #         for j in range(X.num_tiles[1]):
+    #             node_names[k] = "t"+str(tiling)+"_"+str(i)+str(j)
+    #             k -= 1
 
+    X = StateFeatureVectorWithRBF(
+        env.observation_space.low,
+        env.observation_space.high,
+        np.array([15, 15]),
+        np.array([0.08, 0.00044])
+        )
+    for i in range(X.num_bases[0]):
+        for j in range(X.num_bases[1]):
+            node_names[k] = "c_"+str(i)+str(j)
+            k -= 1
 
     visualize.draw_net(config, winner, False, node_names=node_names)
 
