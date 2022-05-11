@@ -33,13 +33,13 @@ env = gym.make('MountainCar-v0')
 #             env.observation_space.low,
 #             env.observation_space.high,
 #             num_tilings=10,
-#             tile_width=np.array([.451,.0351])
+#             tile_width=np.array([.37,.029])
 #         )
 
 X = StateFeatureVectorWithRBF(
     env.observation_space.low,
     env.observation_space.high,
-    np.array([15, 15]),
+    np.array([20, 20]),
     np.array([0.04, 0.00022])
     )
 

@@ -108,12 +108,12 @@ def eval_genome(genome, config):
         #     env.observation_space.low,
         #     env.observation_space.high,
         #     num_tilings=10,
-        #     tile_width=np.array([.451,.0351])
+        #     tile_width=np.array([.37,.029])
         # )
         X = StateFeatureVectorWithRBF(
             env.observation_space.low,
             env.observation_space.high,
-            np.array([15, 15]),
+            np.array([20, 20]),
             np.array([0.04, 0.00022])
             )
         fitness = 0.0
@@ -198,7 +198,7 @@ def run():
     #         env.observation_space.low,
     #         env.observation_space.high,
     #         num_tilings=10,
-    #         tile_width=np.array([.451,.0351])
+    #         tile_width=np.array([.37,.029])
     #     )
         
     # for tiling in range(X.num_tilings):
@@ -210,7 +210,7 @@ def run():
     X = StateFeatureVectorWithRBF(
         env.observation_space.low,
         env.observation_space.high,
-        np.array([15, 15]),
+        np.array([20, 20]),
         np.array([0.04, 0.00022])
         )
     for i in range(X.num_bases[0]):

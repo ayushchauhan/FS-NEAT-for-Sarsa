@@ -9,7 +9,7 @@ pop_size              = 200
 reset_on_extinction   = 0
 
 [DefaultGenome]
-num_inputs              = 225
+num_inputs              = 400
 num_hidden              = 0
 num_outputs             = 1
 initial_connection      = partial_direct 0.1
