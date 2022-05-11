@@ -15,7 +15,7 @@ def test_reinforce(features, with_baseline):
         env.observation_space.low,
         env.observation_space.high,
         env.action_space.n,
-        np.array([15,15]),
+        np.array([20,20]),
         np.array([0.04, 0.00022])
         )
 
@@ -35,8 +35,8 @@ def test_reinforce(features, with_baseline):
 
 if __name__ == "__main__":
     num_iter = 5
-    features = 'all'
-    # features = list(np.load('../feature_selection/selected-features.npy'))
+    # features = 'all'
+    features = list(np.load('../feature_selection/selected-features.npy'))
     
     # Test REINFORCE without baseline
     without_baseline = []

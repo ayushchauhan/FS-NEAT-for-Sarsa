@@ -99,10 +99,9 @@ class PiApproximationWithNN():
         alpha: learning rate
         """
         self.n_features = state_dims
-        self.n_hidden1 = 32
-        self.n_hidden2 = 32
+        self.n_hidden = 32
         self.outputs = num_actions
-        self.net = PiNet(self.n_features, self.n_hidden1, self.n_hidden2, self.outputs)
+        self.net = PiNet(self.n_features, self.n_hidden, self.outputs)
         self.optim = torch.optim.Adam(self.net.parameters(), lr = alpha, betas=(0.9, 0.999))
 
 

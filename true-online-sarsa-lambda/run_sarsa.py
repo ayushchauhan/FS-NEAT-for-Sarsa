@@ -15,15 +15,15 @@ def test_sarsa_lamda(features='all'):
     #     env.observation_space.high,
     #     env.action_space.n,
     #     num_tilings=10,
-    #     tile_width=np.array([.451,.0351])
+    #     tile_width=np.array([.37,.029])
     # )
     X = StateActionFeatureVectorWithRBF(
         features,
         env.observation_space.low,
         env.observation_space.high,
-        env.action_space.n,
-        np.array([15,15]),
-        np.array([0.004, 0.000022])
+        env.action_space.n,       
+        np.array([20,20]),
+        np.array([0.04, 0.00022])
         )
 
 
@@ -81,5 +81,6 @@ def test_sarsa_lamda(features='all'):
 
 if __name__ == "__main__":
     features = list(np.load('../feature_selection/selected-features.npy'))
+    # print(len(features))
     # features = 'all'
     test_sarsa_lamda(features)

@@ -36,13 +36,15 @@ class StateActionFeatureVectorWithTile():
                 tiling = feat[1]
                 i = feat[-2]
                 j = feat[-1]
-                features_indices.append(int(tiling)*25+int(i)*5+int(j))
+                features_indices.append(int(tiling)*36+int(i)*6+int(j))
 
             self.features_indices = features_indices
             if features_indices:
                 features_indices = np.array(features_indices)
                 for i in range(self.num_actions-1):
                     self.features_indices.extend(features_indices+(i+1)*total_feats/self.num_actions)
+            self.features_indices = [int(i) for i in self.features_indices]
+            
 
     def feature_vector_len(self) -> int:
         """
