@@ -23,13 +23,8 @@ def test_sarsa_lamda(features='all'):
         env.observation_space.high,
         env.action_space.n,
         np.array([15,15]),
-        np.array([0.04, 0.00022])
+        np.array([0.004, 0.000022])
         )
-    # for i in range(100):
-    #     x = np.random.uniform(-1.2, 0.6)
-    #     v = np.random.uniform(-0.07, 0.07)
-    #     print((x,v), X((x,v), False, 0))
-    # return
 
 
     st_time = time.time()
@@ -85,11 +80,6 @@ def test_sarsa_lamda(features='all'):
 
 
 if __name__ == "__main__":
-    features = list(np.load('selected-features.npy'))
-    # print(features)
-    # features = ['rb_5_6', 'rb_10_3']
-    # for tiling in range(1):
-    #     for i in range(5):
-    #         for j in range(5):
-    #             features.append("t"+str(tiling)+"_"+str(i)+str(j))
+    features = list(np.load('../feature_selection/selected-features.npy'))
+    # features = 'all'
     test_sarsa_lamda(features)

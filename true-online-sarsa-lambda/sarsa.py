@@ -90,10 +90,6 @@ class StateActionFeatureVectorWithRBF():
 
         self.features = features
 
-        # for c2 in np.linspace(self.state_low[1]+(self.state_high[1]-self.state_low[1])/(2*self.num_bases[1]), self.state_high[1]-(self.state_high[1]-self.state_low[1])/(2*self.num_bases[1]), self.num_bases[1]):
-        #     for c1 in np.linspace(self.state_low[0]+(self.state_high[0]-self.state_low[0])/(2*self.num_bases[0]), self.state_high[0]-(self.state_high[0]-self.state_low[0])/(2*self.num_bases[0]), self.num_bases[0]):
-        #         self.centers.append(np.array([c1, c2]))
-
 
     def feature_vector_len(self) -> int:
         if self.features == 'all':
@@ -112,8 +108,7 @@ class StateActionFeatureVectorWithRBF():
                     feat_matrix = features
                 else:
                     feat_matrix = np.dot(feat_matrix.reshape((-1,1)), features.reshape((1,-1)))
-            # for center in self.centers:
-            #     feat_vec.append(np.exp(-np.linalg.norm(np.array(s)-center)/(2*self.sigma)))
+
             feat_matrix[feat_matrix < 0.0001] = 0
             feat_vec = []
             for act in range(self.num_actions):
